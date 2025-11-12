@@ -1,0 +1,165 @@
+user: {
+    name
+    email
+    phoneNo
+    password
+    role:{enum: [SuperAdmin, CompanyAdmin, Employee], default: Employee}
+    company: {ObjectId, ref:company } (if role is SuperAdmin so company null)
+}
+
+company: {
+    name
+    phoneNo
+    email
+    industry
+    image: {
+        public_id
+        url
+    }
+    address{
+        country
+        state
+        city
+        pincode
+    }
+    owner: {ObjectId, ref:user}
+    employees: [{ObjectId, ref: employee}]
+    isActive: Boolean
+}
+
+employee: {
+    user: {ObjectId, ref:user}
+    image: {
+        public_id
+        url
+    }
+    address{
+        country
+        state
+        city
+        pincode
+    }
+    designation
+    company: {ObjectId, ref:company}
+    role: {ObjectId, ref:role}
+    verify: {enum: [Pending, Verify, Rejected], default: Pending}
+    isActive: Boolean
+}
+
+contacts: {
+    name
+    email
+    phoneNo
+    company: {ObjectId, ref:company}
+}
+
+leadFor: {
+    company: {ObjectId, ref:company}
+    name
+    isActive: Boolean   
+}
+
+leadSource: {
+    company: {ObjectId, ref:company}
+    name
+    isActive: Boolean   
+}
+
+lead: {
+    for : {ObjectId, ref: leadFor}
+    source : {ObjectId, ref: leadSource}
+    priority: {enum: [Low, Medium, High], default: Medium }
+    contact: {
+        name
+        phoneNo
+        email
+        address{
+            country
+            state
+            city
+            pincode
+        }
+        businessCard: {
+            public_id
+            url
+        }
+    }
+    refrence: {
+        name
+        email
+        phoneNo
+    }
+    followUps: [
+        {
+            sequence
+            date
+            conclusion  
+            meeting: {ObjectId, ref: meeting}
+        }
+    ]
+    status: {enum: New, Contacted, Qualified, Converted, Closed, default: New}
+    remark
+    assignedTo {ObjectId, ref: employee}
+    company: {ObjectId, ref:company}
+}
+
+meeting: {
+    title
+    participants: [{ObjectId, ref: user}]
+    forLead: {ObjectId, ref: lead}
+    scheduledTime
+    agenda
+    addparticipants: [{ObjectId, ref: contects}]
+    company: {ObjectId, ref: company}
+}
+
+taskAssigned: {
+    company: {ObjectId, ref: company}
+    title
+    description
+    priority: {enum:[High, Medium, Low], default: Medium}
+    assignedTo : {ObjectId, ref: employee}
+    assignedBy : {ObjectId, ref: user}
+    dueDate
+    conclusion
+    conclusionSubmiteTime
+}
+
+todo: {
+    user: {ObjectId, ref: user}
+    company: {ObjectId, ref: company}
+    title
+    description
+    priority: {enum:[High, Medium, Low], default: Medium}
+    conclusion
+    conclusionSubmiteTime
+}
+
+role: {
+    name
+    permissions:{
+        leads: {
+            create: Boolean
+            read: Boolean
+            update: Boolean
+            delete: Boolean
+        }
+        tasks: {
+            create: Boolean
+            read: Boolean
+            update: Boolean
+            delete: Boolean
+        }
+        meeting: {
+            create: Boolean
+            read: Boolean
+            update: Boolean
+            delete: Boolean
+        }
+    }
+    isActive: Boolean  
+    company: {ObjectId, ref: company}
+}
+
+
+
